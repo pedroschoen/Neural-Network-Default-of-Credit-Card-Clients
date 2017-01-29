@@ -51,8 +51,8 @@ Y_test = base_teste[:,24]
 
 # Model Creation, 1 input layer, 1 hidden layer and 1 exit layter
 model = Sequential()
-model.add(Dense(200, input_dim=22, init='uniform', activation='relu'))
-model.add(Dense(200, init='uniform', activation='relu'))
+model.add(Dense(60, input_dim=22, init='uniform', activation='relu'))
+model.add(Dense(4, init='uniform', activation='relu'))
 model.add(Dense(1, init='uniform', activation='sigmoid'))
 #activation='relu'
 
@@ -65,7 +65,7 @@ model.compile(loss='binary_crossentropy', optimizer=opt , metrics=['accuracy'])
 
 
 # creating .fit
-model.fit(X_train, Y_train, nb_epoch=500, batch_size=30)
+model.fit(X_train, Y_train, nb_epoch=150, batch_size=30)
 
 
 
