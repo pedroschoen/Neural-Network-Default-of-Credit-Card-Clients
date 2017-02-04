@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import Activation
+from keras.layers.core import Dropout
 import keras
 from imblearn.over_sampling import SMOTE
     
@@ -54,13 +56,27 @@ sm = SMOTE(kind='regular')
 
 X_resampled, Y_resampled = sm.fit_sample(X_train, Y_train)
 
-
+layer_1 = 15
+layer_2 = 15
+rate = 0.00001
+epoch = 300
+batch = 30
+#decay = 1e-12
+decay = 0.0
 
 # Model Creation, 1 input layer, 1 hidden layer and 1 exit layter
 model = Sequential()
-model.add(Dense(46, input_dim=22, init='uniform', activation='relu'))
-model.add(Dense(12, init='uniform', activation='relu'))
-model.add(Dense(1, init='uniform', activation='sigmoid'))
+model.add(Dense(15, input_dim=22, init='uniform'))
+model.add(Activation('relu'))
+#model.add(Dropout(0.1))
+model.add(Dense(15, init='uniform'))
+# activation='relu'
+model.add(Activation('relu'))
+##model.add(Dropout(0.1))
+#model.add(Dense(60, init='uniform'))
+#model.add(Activation('relu'))
+model.add(Dense(1, init='uniform'))
+model.add(Activation('sigmoid'))
 #activation='relu'
 
 opt = keras.optimizers.SGD(lr=0.00001)
@@ -72,7 +88,7 @@ model.compile(loss='binary_crossentropy', optimizer= opt , metrics=['accuracy'])
 
 
 # creating .fit
-model.fit(X_resampled, Y_resampled, nb_epoch=500, batch_size=30)
+model.fit(X_resampled, Y_resampled, nb_epoch=300, batch_size=30)
 
 
 
