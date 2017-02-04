@@ -59,17 +59,21 @@ X_resampled, Y_resampled = sm.fit_sample(X_train, Y_train)
 layer_1 = 15
 layer_2 = 15
 rate = 0.00001
-epoch = 300
+epoch = 100
 batch = 30
 #decay = 1e-12
 decay = 0.0
 
+salvar = pandas.read_csv('resultados.csv')
+i = len(salvar.index) + 1
+
+
 # Model Creation, 1 input layer, 1 hidden layer and 1 exit layter
 model = Sequential()
-model.add(Dense(15, input_dim=22, init='uniform'))
+model.add(Dense(layer_1, input_dim=22, init='uniform'))
 model.add(Activation('relu'))
 #model.add(Dropout(0.1))
-model.add(Dense(15, init='uniform'))
+model.add(Dense(layer_2, init='uniform'))
 # activation='relu'
 model.add(Activation('relu'))
 ##model.add(Dropout(0.1))
@@ -79,7 +83,7 @@ model.add(Dense(1, init='uniform'))
 model.add(Activation('sigmoid'))
 #activation='relu'
 
-opt = keras.optimizers.SGD(lr=0.00001)
+opt = keras.optimizers.SGD(lr=rate)
 
 # Compile model
 model.compile(loss='binary_crossentropy', optimizer= opt , metrics=['accuracy'])
@@ -88,7 +92,7 @@ model.compile(loss='binary_crossentropy', optimizer= opt , metrics=['accuracy'])
 
 
 # creating .fit
-model.fit(X_resampled, Y_resampled, nb_epoch=300, batch_size=30)
+model.fit(X_resampled, Y_resampled, nb_epoch=epoch, batch_size=batch)
 
 
 
@@ -146,6 +150,10 @@ agg2['max_ks'] = agg2.ks.apply(flag)
    
 print ()
 print (agg2)
+
+salvar.loc[i] = [agg2.ks.max(),layer_1,layer_2,rate,epoch,batch,decay]
+salvar.to_csv("resultados.csv",index=False)
+
 #
 #numpy.savetxt("teste_scores", predictions, delimiter=";", fmt='%s')
 #numpy.savetxt("teste_y", Y_test, delimiter=";", fmt='%s')
