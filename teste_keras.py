@@ -25,6 +25,8 @@ numpy.random.seed(seed)
 
 base = pandas.read_csv('base_nao_trabalhada.csv')
 
+base['default payment next month'] = (base['default payment next month'] -1)*-1
+
 #dividindo a base entre teste e treino
 
 train, test = train_test_split(base, test_size = 0.2)
@@ -56,8 +58,9 @@ sm = SMOTE(kind='regular')
 
 X_resampled, Y_resampled = sm.fit_sample(X_train, Y_train)
 
-layer_1 = 15
-layer_2 = 15
+
+layer_1 = 46
+layer_2 = 12
 rate = 0.00001
 epoch = 100
 batch = 30
