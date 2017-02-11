@@ -17,7 +17,7 @@ from keras.layers import Activation
 from keras.layers.core import Dropout
 import keras
 from imblearn.over_sampling import SMOTE
-    
+import teste_ks
 
 seed = 8
 numpy.random.seed(seed)
@@ -59,14 +59,14 @@ sm = SMOTE(kind='regular')
 X_resampled, Y_resampled = sm.fit_sample(X_train, Y_train)
 
 
-layer_1 = 20
-layer_2 = 10 #se zero, comentar a linha do layer_2
+layer_1 = 5
+layer_2 = 5 #se zero, comentar a linha do layer_2
 rate = 0.01
-epoch = 300
+epoch = 50
 batch = 30
 #decay = 1e-12
 decay = 0.0
-drop = 0.6 #se 0, comentar a linha do dropout
+drop = 0.5 #se 0, comentar a linha do dropout
 
 salvar = pandas.read_csv('resultados_dummys.csv')
 i = len(salvar.index) + 1
@@ -116,49 +116,53 @@ s=pandas.DataFrame(Y_test,columns=['CLASSE'])
 x=predictions.join(s)
 #numpy.savetxt("testeks.csv", x, fmt='%.2f',delimiter=";",)
 
-x['mau']= 1 - x.CLASSE
+#
+#
+#x['mau']= 1 - x.CLASSE
+#
+#
+#x['bucket'] = pandas.qcut(x.SCORE, 10)
+#
+#grouped = x.groupby('bucket', as_index = False)
+#
+##numpy.savetxt("testeks.csv", x, fmt='%.2f',delimiter=";",)
+#
+#
+#agg1 = grouped.min().SCORE
+# 
+#agg1 = pandas.DataFrame(grouped.min().SCORE, columns = ['min_scr'])
+# 
+#agg1['min_scr'] = grouped.min().SCORE
+#
+#
+#agg1['max_scr'] = grouped.max().SCORE
+# 
+#agg1['bads'] = grouped.sum().mau
+#
+#agg1['goods'] = grouped.sum().CLASSE
+# 
+#agg1['total'] = agg1.bads + agg1.goods
+#
+# 
+#agg2 = (agg1.sort_values(by = 'min_scr')).reset_index(drop = True)
+# 
+#agg2['odds'] = (agg2.goods / agg2.bads).apply('{0:.2f}'.format)
+# 
+#agg2['bad_rate'] = (agg2.bads / agg2.total).apply('{0:.2%}'.format)
+# 
+# 
+#agg2['ks'] = numpy.round(((agg2.bads / x.mau.sum()).cumsum() - (agg2.goods / x.CLASSE.sum()).cumsum()), 4) * 100
+#  
+#flag = lambda x: '<----' if x == agg2.ks.max() else ''
+# 
+#agg2['max_ks'] = agg2.ks.apply(flag)
+#   
+#print ()
+#print (agg2)
 
+ks_max = teste_ks.KS(x)
 
-x['bucket'] = pandas.qcut(x.SCORE, 10)
-
-grouped = x.groupby('bucket', as_index = False)
-
-#numpy.savetxt("testeks.csv", x, fmt='%.2f',delimiter=";",)
-
-
-agg1 = grouped.min().SCORE
- 
-agg1 = pandas.DataFrame(grouped.min().SCORE, columns = ['min_scr'])
- 
-agg1['min_scr'] = grouped.min().SCORE
-
-
-agg1['max_scr'] = grouped.max().SCORE
- 
-agg1['bads'] = grouped.sum().mau
-
-agg1['goods'] = grouped.sum().CLASSE
- 
-agg1['total'] = agg1.bads + agg1.goods
-
- 
-agg2 = (agg1.sort_values(by = 'min_scr')).reset_index(drop = True)
- 
-agg2['odds'] = (agg2.goods / agg2.bads).apply('{0:.2f}'.format)
- 
-agg2['bad_rate'] = (agg2.bads / agg2.total).apply('{0:.2%}'.format)
- 
- 
-agg2['ks'] = numpy.round(((agg2.bads / x.mau.sum()).cumsum() - (agg2.goods / x.CLASSE.sum()).cumsum()), 4) * 100
-  
-flag = lambda x: '<----' if x == agg2.ks.max() else ''
- 
-agg2['max_ks'] = agg2.ks.apply(flag)
-   
-print ()
-print (agg2)
-
-salvar.loc[i] = [agg2.ks.max(),layer_1,layer_2,rate,epoch,batch,decay,drop]
+salvar.loc[i] = [ks_max,layer_1,layer_2,rate,epoch,batch,decay,drop]
 salvar.to_csv("resultados_dummys.csv",index=False)
 
 #
