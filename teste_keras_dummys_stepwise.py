@@ -23,7 +23,7 @@ seed = 8
 numpy.random.seed(seed)
 
 
-def modelo(X,Y,i):
+def modelo(X,Y,coluna):
     
     tamanho = len(X.columns) + 1      
     
@@ -42,7 +42,7 @@ def modelo(X,Y,i):
     layer_1 = 50
     layer_2 = 20 #se zero, comentar a linha do layer_2
     rate = 0.01
-    epoch = 50
+    epoch = 10 #50
     batch = 30
     #decay = 1e-12
     decay = 0.0
@@ -87,7 +87,7 @@ def modelo(X,Y,i):
     
     ks_max = teste_ks.KS(x)
     
-    salvar.loc[i] = [ks_max,layer_1,layer_2,rate,epoch,batch,decay,drop,i]
+    salvar.loc[i] = [ks_max,layer_1,layer_2,rate,epoch,batch,decay,drop,coluna]
     salvar.to_csv("resultados_dummys_stepwise.csv",index=False)
     
     return ks_max
@@ -121,8 +121,8 @@ columns = ['LIM_BAL_1', 'LIM_BAL_2', 'LIM_BAL_3',
 
 print ('Modelo com todas as variáveis:')
 
-ks_min = modelo(train1,test1,'Nada') 
-ks_base = ks_min
+ks_base = modelo(train1,test1,'Nada') 
+ks_max = ks_base
 var_min = []
 drop = []
 
@@ -137,10 +137,10 @@ while stop:
         ks_atual = modelo(train,test,drop)
         
         
-        if (ks_atual<ks_min):
+        if (ks_atual>ks_max):
             var_min=[]
             var_min.append(i)
-            ks_min=ks_atual
+            ks_max=ks_atual
         
         if (ks_atual>ks_base):
             melhor=1
@@ -153,4 +153,5 @@ while stop:
         stop=False
     else:
         drop.append(var_min[0])
+        columns.remove(var_min[0])
         var_min=[]
