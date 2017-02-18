@@ -49,9 +49,9 @@ train, test = train_test_split(base, test_size = 0.2)
 train=train.values
 test=test.values
 
-X_train = train[:,1:23]
+X_train = train[:,1:24]
 Y_train = train[:,24]
-X_test =  test[:,1:23]
+X_test =  test[:,1:24]
 Y_test = test[:,24]
 
 sm = SMOTE(kind='regular')
