@@ -8,9 +8,11 @@ Created on Sat Feb 11 19:49:48 2017
 
 
     
-def KS(x,verbose=True):
-    
-
+def KS(x,verbose=True,plot=False):
+    import seaborn
+    import pandas
+    import numpy
+    import matplotlib.pyplot as plt
 
     x['mau']= 1 - x.CLASSE
     
@@ -50,9 +52,43 @@ def KS(x,verbose=True):
     flag = lambda x: '<----' if x == agg2.ks.max() else ''
      
     agg2['max_ks'] = agg2.ks.apply(flag)
-    
+         
     if verbose:
         print ()
         print (agg2)
 
+        
+    agg2['goodstotal']=agg2['goods'].sum()
+    agg2['badtotal']=agg2['bads'].sum()
+    agg2['perc_bom']=agg2['goods']/agg2['goodstotal']
+    agg2['perc_mau']=agg2['bads']/agg2['badtotal']
+    agg2['perc_bom_acum']=agg2['perc_bom'].cumsum()
+    agg2['perc_mau_acum']=agg2['perc_mau'].cumsum()
+    
+    
+    if plot:
+        
+        plt.figure(1)
+        plt.subplot(311)
+        plt.plot(agg2['perc_bom_acum'])
+        plt.plot(agg2['perc_mau_acum'])
+        plt.title('%Bom acum x %Mau acum')
+    
+        
+        plt.subplot(312)
+        plt.plot(agg2['perc_bom'])
+        plt.plot(agg2['perc_mau'])
+        plt.title('%Bom x %Mau')
+        
+        
+        plt.subplot(313)
+        plt.plot(agg2['ks'])
+        plt.title('KS')
+        
+        plt.tight_layout()
+    
+        plt.show()    
+        
     return agg2.ks.max()
+    
+    
