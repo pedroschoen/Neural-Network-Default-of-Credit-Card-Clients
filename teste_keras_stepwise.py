@@ -42,8 +42,8 @@ def modelo(train,test,coluna):
     layer_1 = 46
     layer_2 = 12 #se zero, comentar a linha do layer_2
     rate = 0.00001
-    epoch = 100 #50
-    batch = 30
+    epoch = 500 #50
+    batch = 500
     #decay = 1e-12
     decay = 0.0
     drop = 0.0 #se 0, comentar a linha do dropout
@@ -119,12 +119,16 @@ stop = True
 while stop:
     melhor=0
     for i in columns:
-        drop.append(i)
-        print ('Testing Removing: ',drop)
-        train = train1.drop(i,axis=1)
-        test = test1.drop(i,axis=1)
-        ks_atual = modelo(train,test,drop)
         
+        try:
+            drop.append(i)
+            print ('Testing Removing: ',drop)
+            train = train1.drop(i,axis=1)
+            test = test1.drop(i,axis=1)
+            ks_atual = modelo(train,test,drop)
+            
+        except ValueError:
+            ks_atual = 0
         
         if (ks_atual>ks_max):
             var_min=[]
